@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
 const config = {
   // Entorno de prueba
-  testEnvironment: 'node',
+  testEnvironment: "node",
 
   // Rutas de los archivos de prueba
   testMatch: [
