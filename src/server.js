@@ -8,7 +8,6 @@ const { Pool } = pkg;
 const app = express();
 app.use(express.json());
 
-// 🔗 Conexión con PostgreSQL
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
