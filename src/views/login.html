@@ -105,3 +105,34 @@
   </body>
   <script src="login.js"></script>
 </html>
+
+<!-- Página de Verificación de Correo (oculta inicialmente) -->
+      <div id="verificationPage" style="display: none;">
+    <div class="login-container">
+      <div class="verification-content">
+        <div class="verification-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <h1>Verifica tu Correo</h1>
+        <p>Hemos enviado un código de verificación a:</p>
+        <div class="user-email" id="verificationEmail"></div>
+        <p>Por favor, revisa tu bandeja de entrada e ingresa el código:</p>
+
+        <div class="verification-code-input">
+          <input type="text" id="code1" maxlength="1" pattern="[0-9]" />
+          <input type="text" id="code2" maxlength="1" pattern="[0-9]" />
+          <input type="text" id="code3" maxlength="1" pattern="[0-9]" />
+          <input type="text" id="code4" maxlength="1" pattern="[0-9]" />
+          <input type="text" id="code5" maxlength="1" pattern="[0-9]" />
+          <input type="text" id="code6" maxlength="1" pattern="[0-9]" />
+        </div>
+
+        <button id="verifyButton">Verificar</button>
+        <p id="timerText"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

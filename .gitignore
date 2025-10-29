@@ -15,7 +15,6 @@ docker-compose.yml
 Dockerfile
 .git
 
-
 # Tests
 coverage/
 dist/

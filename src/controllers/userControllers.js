@@ -1,39 +1,42 @@
-import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-export const loginUser = async (req, res) => {
-  const { correo, contraseña } = req.body;
+dotenv.config();
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://127.0.0.1:3000/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = {
+          id: profile.id,
+          nombre: profile.displayName,
+          correo: profile.emails[0].value,
+          foto: profile.photos[0].value,
+        };
+        return done(null, user);
+      } catch (error) {
+        return done(error, null);
+      }
+    }
+  )
+);
 
-  try {
-    const usuarioDemo = {
-      id: 1,
-      correo: "admin@forcestack.com",
-      contraseñaHash: await bcrypt.hash("123456", 10),
-    };
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
-    if (correo !== usuarioDemo.correo)
-      return res.status(400).json({ message: "Correo incorrecto" });
+// Controlador para generar token JWT y redirigir
+export const googleCallback = (req, res) => {
+  const user = req.user;
+  const token = jwt.sign(user, process.env.JWT_SECRET || "secret_key", {
+    expiresIn: "2h",
+  });
 
-    const passwordMatch = await bcrypt.compare(
-      contraseña,
-      usuarioDemo.contraseñaHash
-    );
-    if (!passwordMatch)
-      return res.status(400).json({ message: "Contraseña incorrecta" });
-
-    // Crear token JWT
-    const token = jwt.sign(
-      { id: usuarioDemo.id, correo: usuarioDemo.correo },
-      process.env.JWT_SECRET || "secret_key",
-      { expiresIn: "2h" }
-    );
-
-    res.status(200).json({
-      message: "Inicio de sesión exitoso",
-      token,
-      user: { id: usuarioDemo.id, correo: usuarioDemo.correo },
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Error interno", error: error.message });
-  }
+  // Puedes almacenar el token en cookie o query
+  res.redirect(`/login.html?token=${token}`);
 };
