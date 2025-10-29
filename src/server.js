@@ -16,9 +16,29 @@ const pool = new Pool({
   port: process.env.DB_PORT
 });
 
-pool.connect()
-  .then(() => console.log("✅ Conectado a PostgreSQL (ForceStackDB) correctamente"))
-  .catch(err => console.error("❌ Error al conectar a PostgreSQL:", err));
+const MAX_RETRIES = 10;
+const RETRY_DELAY = 3000; // 3 segundos
+
+// 🔁 Función para reconectar si la base aún no está lista
+const connectWithRetry = async (retries = MAX_RETRIES) => {
+  while (retries) {
+    try {
+      await pool.query("SELECT NOW()");
+      console.log("✅ Conectado a PostgreSQL (ForceStackDB) correctamente");
+      return;
+    } catch (err) {
+      retries -= 1;
+      console.log(
+        `⚠️ No se pudo conectar a PostgreSQL. Reintentando en ${RETRY_DELAY / 1000}s... (${MAX_RETRIES - retries}/${MAX_RETRIES})`
+      );
+      await new Promise((res) => setTimeout(res, RETRY_DELAY));
+    }
+  }
+  console.error("❌ No se pudo conectar a PostgreSQL después de varios intentos. Cerrando servidor...");
+  process.exit(1);
+};
+
+await connectWithRetry();
 
 app.get("/", (req, res) => {
   res.send("🚀 ForceStack API en Node 20.18.0 funcionando!");
@@ -27,3 +47,5 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Servidor corriendo en puerto ${process.env.PORT}`);
 });
+
+export default app;
