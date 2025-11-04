@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     passwordInput.setAttribute("type", type);
     toggleBtn.innerHTML =
       type === "password"
-        ? "<i class="fas fa-eye"></i>"
-        : "<i class="fas fa-eye-slash"></i>";
+        ? "<i class=\"fas fa-eye\"></i>"
+        : "<i class=\"fas fa-eye-slash\"></i>";
   });
 
   form.addEventListener("submit", async (e) => {
