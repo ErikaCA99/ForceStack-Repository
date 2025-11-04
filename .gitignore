@@ -19,6 +19,7 @@ Dockerfile
 coverage/
 dist/
 build/
+.jest_cache/
 
 # VSCode
 .vscode/
