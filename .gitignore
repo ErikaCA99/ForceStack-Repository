@@ -12,13 +12,13 @@ yarn-error.log
 
 # Docker y Git
 docker-compose.yml
-Dockerfile
 .git
 
 # Tests
 coverage/
 dist/
 build/
+.jest_cache/
 
 # VSCode
 .vscode/
