@@ -70,7 +70,7 @@ jobs:
 
       # 4️⃣ Construir imagen Docker
       - name: Construir imagen de backend
-        run: docker build -t forcestack-backend .
+        run: docker build -t forcestack-backend -f ./Dockerfile .
 
       # 5️⃣ Ejecutar contenedor temporal para verificar que funcione
       - name: Verificar ejecución del contenedor
