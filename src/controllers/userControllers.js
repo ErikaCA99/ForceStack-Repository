@@ -25,7 +25,7 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         const correoGoogle = profile.emails[0].value;
-        const nombreGoogle = profile.displayName;
+        //const nombreGoogle = profile.displayName;
 
         // Buscar si el correo ya existe
         const result = await pool.query(
