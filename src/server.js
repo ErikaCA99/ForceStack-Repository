@@ -42,7 +42,7 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
     } catch (err) {
       retries--;
       console.log(
-        `⚠️ Reintentando conexión (${MAX_RETRIES - retries}/${MAX_RETRIES})...`
+        `⚠️ Reintentando conexión (${MAX_RETRIES - retries}/${MAX_RETRIES})...${err.message}`
       );
       await new Promise((res) => setTimeout(res, RETRY_DELAY));
     }
