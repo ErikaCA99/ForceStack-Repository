@@ -59,11 +59,11 @@ El modelo de datos incluye las principales entidades del sistema: **Usuarios (es
 ---
 
 ## Tecnologías Propuestas
-- **Frontend:** React + Tailwind CSS  
-- **Backend:** FastAPI (Python)  
+- **Frontend:** JavaScript (HTML, CSS)  
+- **Backend:** Node.js + Express  
 - **Base de Datos:** PostgreSQL  
 - **Ejecución de código:** contenedores Docker aislados  
-- **Notificaciones:** integración con servicios de correo (SMTP / Gmail API)  
+- **Notificaciones:** integración con servicios de correo (SMTP / Gmail API) 
 
 ---
 
