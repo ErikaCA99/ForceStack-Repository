@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alert(`✅ Bienvenido ${data.user.correo}`);
         localStorage.setItem("token", data.token);
         // Redirigir al dashboard o página principal
-        window.location.href = "/dashboard.html";
+        window.location.href = "pages/dashboard.html";
       } else {
         alert(`❌ ${data.message}`);
       }

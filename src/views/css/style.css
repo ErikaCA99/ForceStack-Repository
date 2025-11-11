@@ -152,19 +152,19 @@ h1 {
   color: #4e4c4c;
   margin: 28px 0 18px;
   font-size: 14px;
-  position: relative;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .divider::before,
 .divider::after {
   content: "";
-  position: absolute;
-  top: 50%;
-  width: 40%;
-  height: 1px;
-  background-color: var(--border-color);
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+  margin: 0 10px;
 }
 
 .divider::before {
