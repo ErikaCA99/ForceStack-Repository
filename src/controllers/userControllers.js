@@ -20,43 +20,51 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback", // usa localhost si estás en Docker
+      callbackURL: "http://localhost:3000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const correoGoogle = profile.emails[0].value;
-        //const nombreGoogle = profile.displayName;
+        const nombreGoogle = profile.name?.givenName || "";
+        const apellidoGoogle = profile.name?.familyName || "";
 
         // Buscar si el correo ya existe
         const result = await pool.query(
-          "SELECT correo, rol FROM users WHERE correo = $1 LIMIT 1",
+          "SELECT id, correo, rol FROM users WHERE correo = $1 LIMIT 1",
           [correoGoogle]
         );
 
         if (result.rows.length === 0) {
-          //  Usuario no encontrado → lo registramos
+          //  Usuario no encontrado lo registramos
           console.log(` Registrando nuevo usuario: ${correoGoogle}`);
 
           const rolPorDefecto = "estudiante";
-          const nuevaContrasena = 1234; // el usuario inició con Google
+          const nuevaContrasena = "1234";
+          const fechaActual = new Date();
+
           const insertQuery = `
-            INSERT INTO users (correo, contrasena, rol)
-            VALUES ($1, $2, $3)
-            RETURNING correo, rol
+            INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id, correo, rol
           `;
+
           const nuevo = await pool.query(insertQuery, [
+            nombreGoogle,
+            apellidoGoogle,
             correoGoogle,
             nuevaContrasena,
             rolPorDefecto,
+            fechaActual,
           ]);
 
           console.log(
             ` Usuario ${correoGoogle} creado exitosamente con rol ${rolPorDefecto}`
           );
+
           return done(null, nuevo.rows[0]);
         }
 
-        //  Usuario ya existente
+        // Usuario ya existente
         const usuario = result.rows[0];
         console.log(
           ` Usuario ${usuario.correo} autenticado con rol ${usuario.rol}`
