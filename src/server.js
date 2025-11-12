@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(express.static("src/views"));
 app.use("/css", express.static("src/views/css"));
 app.use("/js", express.static("src/views/js"));
+app.use("/components", express.static("src/views/components"));
 
 app.use(
   session({
@@ -65,6 +66,10 @@ app.get("/", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
   res.sendFile("pages/dashboard.html", { root: "src/views" });
+});
+
+app.get("/topic_uno", (req, res) => {
+  res.sendFile("pages/topic_uno.html", { root: "src/views" });
 });
 
 app.listen(process.env.PORT, () =>
