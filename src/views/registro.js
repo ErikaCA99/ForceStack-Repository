@@ -83,7 +83,7 @@ class FormValidator {
         }
         break;
 
-      case "email":
+      case "email":{
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value) {
           errorMessage = "El correo electrónico es requerido.";
@@ -93,7 +93,7 @@ class FormValidator {
           isValid = false;
         }
         break;
-
+      }
       case "password":
         if (!value) {
           errorMessage = "La contraseña es requerida.";
