@@ -9,8 +9,13 @@ dotenv.config();
 const { Pool } = pkg;
 
 const app = express();
+
 app.use(express.json());
+
 app.use(express.static("src/views"));
+app.use("/css", express.static("src/views/css"));
+app.use("/js", express.static("src/views/js"));
+app.use("/components", express.static("src/views/components"));
 
 app.use(
   session({
@@ -37,7 +42,7 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
   while (retries) {
     try {
       await pool.query("SELECT NOW()");
-      console.log("✅ Conectado a PostgreSQL (ForceStackDB)");
+      console.log("Conectado a PostgreSQL (ForceStackDB)");
       return;
     } catch (err) {
       retries--;
@@ -47,7 +52,7 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
       await new Promise((res) => setTimeout(res, RETRY_DELAY));
     }
   }
-  console.error("❌ No se pudo conectar a PostgreSQL");
+  console.error("No se pudo conectar a PostgreSQL");
   process.exit(1);
 };
 
@@ -56,11 +61,19 @@ await connectWithRetry();
 app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
-  res.sendFile("login.html", { root: "src/views" });
+  res.sendFile("pages/login.html", { root: "src/views" });
+});
+
+app.get("/dashboard", (req, res) => {
+  res.sendFile("pages/dashboard.html", { root: "src/views" });
+});
+
+app.get("/topic_uno", (req, res) => {
+  res.sendFile("pages/topic_uno.html", { root: "src/views" });
 });
 
 app.listen(process.env.PORT, () =>
-  console.log(` Servidor corriendo en http://127.0.0.1:${process.env.PORT}`)
+  console.log(`Servidor corriendo en http://127.0.0.1:${process.env.PORT}`)
 );
 
 export default app;
