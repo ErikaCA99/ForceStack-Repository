@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import pkg from "pg";
 import passport from "passport";
-import session from "express-session"; 
-import authRoutes from "./routes/authRoutes.js"; 
+import session from "express-session";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 const { Pool } = pkg;
@@ -57,6 +57,14 @@ app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile("login.html", { root: "src/views" });
+});
+
+app.get("/registro", (req, res) => {
+  res.sendFile("registro.html", { root: "src/views" });
+});
+
+app.get("/dashboard.html", (req, res) => {
+  res.sendFile("dashboard.html", { root: "src/views" });
 });
 
 app.listen(process.env.PORT, () =>

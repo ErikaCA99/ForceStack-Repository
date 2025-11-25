@@ -21,4 +21,22 @@ router.get(
   googleCallback
 );
 
+// Redirección a Microsoft
+router.get(
+  "/microsoft",
+  passport.authenticate("microsoft", {
+    scope: ["user.read"],
+  })
+);
+
+// Callback de Microsoft
+router.get(
+  "/microsoft/callback",
+  passport.authenticate("microsoft", {
+    failureRedirect: "/login.html?error=microsoft_auth_failed",
+    session: false,
+  }),
+  microsoftCallback
+);
+
 export default router;
