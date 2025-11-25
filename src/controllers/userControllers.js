@@ -3,6 +3,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import pkg from "pg";
+import { Strategy as MicrosoftStrategy } from "passport-microsoft";
 
 dotenv.config();
 const { Pool } = pkg;

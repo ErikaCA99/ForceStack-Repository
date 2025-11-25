@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import "../controllers/userControllers.js"; // inicializa la estrategia
 import { googleCallback } from "../controllers/userControllers.js";
+import { microsoftCallback } from "../controllers/userControllers.js";
 
 const router = express.Router();
 
