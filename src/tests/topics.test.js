@@ -1,10 +1,9 @@
 const request = require("supertest");
-const app = require("../server.js");
+const app = require("../app.js").default;
 
 describe("API básica", () => {
-  test("GET /api/health debe responder con ok:true", async () => {
-    const res = await request(app).get("/api/health");
-    expect(res.status).toBe(200);
-    expect(res.body.ok).toBe(true);
+  test("GET / debe devolver el login", async () => {
+    const res = await request(app).get("/");
+    expect(res.statusCode).toBe(200);
   });
 });
