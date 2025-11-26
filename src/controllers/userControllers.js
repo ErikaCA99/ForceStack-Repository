@@ -1,13 +1,15 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as MicrosoftStrategy } from "passport-microsoft";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 import pkg from "pg";
-import { Strategy as MicrosoftStrategy } from "passport-microsoft";
 
 dotenv.config();
 const { Pool } = pkg;
 
+// Configuración de la Base de Datos
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -16,122 +18,82 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// Función auxiliar para crear o buscar usuario
-async function findOrCreateUser(email, provider) {
+async function findOrCreateUser(email, nombre, apellido, provider) {
   try {
-    // Buscar si el correo ya existe
     const result = await pool.query(
-      "SELECT correo, rol FROM users WHERE correo = $1 LIMIT 1",
+      "SELECT * FROM users WHERE correo = $1 LIMIT 1",
       [email]
     );
 
     if (result.rows.length === 0) {
-      // Usuario no encontrado → lo registramos
-      console.log(`✅ Registrando nuevo usuario: ${email} (${provider})`);
+      console.log(`✅ Registrando nuevo usuario desde ${provider}: ${email}`);
 
       const rolPorDefecto = "estudiante";
-      const nuevaContrasena = 1234; // el usuario inició con OAuth
+      // Nota: Para usuarios OAuth generamos una contraseña dummy o vacía,
+      // pero encriptada por si acaso el sistema requiere hash.
+      const passDummy = await bcrypt.hash("OAUTH_USER_PASS", 10);
+      const fechaActual = new Date();
+
       const insertQuery = `
-        INSERT INTO users (correo, contrasena, rol)
-        VALUES ($1, $2, $3)
-        RETURNING correo, rol
+        INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
       `;
+
       const nuevo = await pool.query(insertQuery, [
+        nombre || "", 
+        apellido || "",
         email,
-        nuevaContrasena,
+        passDummy,
         rolPorDefecto,
+        fechaActual,
       ]);
 
-      console.log(
-        `✅ Usuario ${email} creado exitosamente con rol ${rolPorDefecto}`
-      );
+      console.log(`✅ Usuario ${email} creado exitosamente.`);
       return nuevo.rows[0];
     }
 
-    // Usuario ya existente
+    // 3. Usuario ya existente
     const usuario = result.rows[0];
     console.log(
-      `✅ Usuario ${usuario.correo} autenticado con rol ${usuario.rol}`
+      `✅ Usuario ${usuario.correo} autenticado (Rol: ${usuario.rol})`
     );
     return usuario;
   } catch (error) {
-    console.error("❌ Error verificando o creando el usuario:", error);
+    console.error(`❌ Error verificando usuario en ${provider}:`, error);
     throw error;
   }
 }
 
+//GOOGLE
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback", // usa localhost si estás en Docker
+      callbackURL: "http://localhost:3000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const correoGoogle = profile.emails[0].value;
-        //const nombreGoogle = profile.displayName;
+        const correo = profile.emails[0].value;
+        const nombre = profile.name?.givenName || "";
+        const apellido = profile.name?.familyName || "";
 
-        // Buscar si el correo ya existe
-        const result = await pool.query(
-          "SELECT correo, rol FROM users WHERE correo = $1 LIMIT 1",
-          [correoGoogle]
-        );
-
-        if (result.rows.length === 0) {
-          //  Usuario no encontrado → lo registramos
-          console.log(` Registrando nuevo usuario: ${correoGoogle}`);
-
-          const rolPorDefecto = "estudiante";
-          const nuevaContrasena = 1234; // el usuario inició con Google
-          const insertQuery = `
-            INSERT INTO users (correo, contrasena, rol)
-            VALUES ($1, $2, $3)
-            RETURNING correo, rol
-          `;
-          const nuevo = await pool.query(insertQuery, [
-            correoGoogle,
-            nuevaContrasena,
-            rolPorDefecto,
-          ]);
-
-          console.log(
-            ` Usuario ${correoGoogle} creado exitosamente con rol ${rolPorDefecto}`
-          );
-          return done(null, nuevo.rows[0]);
-        }
-
-        //  Usuario ya existente
-        const usuario = result.rows[0];
-        console.log(
-          ` Usuario ${usuario.correo} autenticado con rol ${usuario.rol}`
+        const usuario = await findOrCreateUser(
+          correo,
+          nombre,
+          apellido,
+          "Google"
         );
         return done(null, usuario);
       } catch (error) {
-        console.error(" Error verificando o creando el usuario:", error);
         return done(error, null);
       }
     }
   )
 );
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
-
-// Callback de Google (genera token si el usuario existe o fue creado)
-export const googleCallback = (req, res) => {
-  if (!req.user) {
-    return res.redirect("/login.html?error=usuario_no_encontrado");
-  }
-
-  const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
-    expiresIn: "2h",
-  });
-
-  // Redirige con el token al dashboard
-  res.redirect(`/dashboard.html?token=${token}`);
-};
-
+//MICROSOFT
 passport.use(
   new MicrosoftStrategy(
     {
@@ -143,40 +105,85 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Microsoft devuelve el email en profile.emails o profile._json.mail
-        const correoMicrosoft =
+        // Microsoft a veces devuelve el mail en lugares distintos
+        const correo =
           profile.emails?.[0]?.value ||
           profile._json?.mail ||
           profile._json?.userPrincipalName;
 
-        if (!correoMicrosoft) {
-          console.error("❌ No se pudo obtener el email de Microsoft");
+        if (!correo) {
           return done(
-            new Error("Email no disponible en el perfil de Microsoft"),
+            new Error("No se pudo obtener el email de Microsoft"),
             null
           );
         }
 
-        const usuario = await findOrCreateUser(correoMicrosoft, "Microsoft");
+        const nombre = profile.name?.givenName || profile.displayName || "";
+        const apellido = profile.name?.familyName || "";
+
+        const usuario = await findOrCreateUser(
+          correo,
+          nombre,
+          apellido,
+          "Microsoft"
+        );
         return done(null, usuario);
       } catch (error) {
-        console.error("❌ Error en autenticación de Microsoft:", error);
         return done(error, null);
       }
     }
   )
 );
 
-// Callback de Microsoft (genera token si el usuario existe o fue creado)
-export const microsoftCallback = (req, res) => {
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+// Generador de Token reutilizable
+const generarTokenYRedirigir = (req, res) => {
   if (!req.user) {
     return res.redirect("/login.html?error=usuario_no_encontrado");
   }
-
   const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
     expiresIn: "2h",
   });
-
-  // Redirige con el token al dashboard
   res.redirect(`/dashboard.html?token=${token}`);
+};
+
+export const googleCallback = generarTokenYRedirigir;
+export const microsoftCallback = generarTokenYRedirigir;
+
+// --- REGISTRO MANUAL (Endpoint API) ---
+export const registerUser = async (req, res) => {
+  try {
+    
+    const { nombre, apellido, correo, contraseña, rol } = req.body;
+
+    if (!nombre || !apellido || !correo || !contraseña) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    const existe = await pool.query(
+      "SELECT correo FROM users WHERE correo = $1",
+      [correo]
+    );
+    if (existe.rows.length > 0) {
+      return res.status(400).json({ message: "El correo ya está registrado" });
+    }
+
+    const hash = await bcrypt.hash(contraseña, 10);
+    const fecha_creacion = new Date();
+
+    await pool.query(
+      `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion]
+    );
+
+    res.status(201).json({ message: "Usuario registrado exitosamente" });
+  } catch (error) {
+    console.error("Error al registrar:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
 };
