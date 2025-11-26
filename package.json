@@ -8,6 +8,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "lint": "npx eslint . --ext .js,.mjs",
+    "lint:fix": "npx eslint . --ext .js,.mjs --fix",
     "test": "jest --coverage --runInBand"
   },
   "keywords": [],
@@ -33,6 +34,7 @@
     "globals": "^16.4.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
-    "sequelize-cli": "^6.6.3"
+    "sequelize-cli": "^6.6.3",
+    "supertest": "^7.1.4"
   }
 }

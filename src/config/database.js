@@ -1,5 +1,5 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+const { Pool } = require("pg");
+require("dotenv").config();
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -12,8 +12,8 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-pool.on('error', (err) => {
-  console.error('Error inesperado en el pool de PostgreSQL:', err);
+pool.on("error", (err) => {
+  console.error("Error inesperado en el pool de PostgreSQL:", err);
 });
 
 module.exports = pool;
