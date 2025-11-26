@@ -3,213 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Módulo 1 - Fundamentos de Python</title>
+  <title>Tópico 1 - Fundamentos de Python</title>
+
+  <!-- ESTILO GLOBAL DEL DASHBOARD -->
   <link rel="stylesheet" href="/css/style_dashboard.css" />
+
+  <!-- ESTILOS DEL SIDEBAR Y DEL TEMA -->
   <link rel="stylesheet" href="/css/style_sidebar.css" />
   <link rel="stylesheet" href="/css/style_topic.css" />
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <div id="navbar-placeholder"></div>
-    <script src="/js/loadNavbar.js"></script>
+  <script src="/js/loadNavbar.js"></script>
 
   <div class="layout">
-    <div id="sidebar-container"></div>
+    <aside class="sidebar" id="sidebar-container"></aside>
 
-    <main class="main-content module-content">
-      <div class="container">
+    <main class="module-content">
+      <section id="lesson-content" class="topic-banner">
 
-        <section id="topic" class="section active">
-          <div class="section-header">
+        <div class="banner-header">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python Logo">
+          <div>
             <h1>Fundamentos de Python</h1>
+            <p class="subtitle">Tu primer acercamiento profesional al lenguaje más usado del mundo 🐍✨</p>
           </div>
-          <div class="content-block">
-            <h2>¿Qué es Python?</h2>
-            <p>
-              Python es un lenguaje de programación <strong>interpretado, dinámico, multiplataforma y orientado a objetos</strong>. 
-              Fue creado por <strong>Guido van Rossum</strong> en 1991 y se caracteriza por su sintaxis limpia y legible.  
-              Su filosofía se basa en <em>“la claridad por encima de la complejidad”</em>, lo que lo convierte en una herramienta ideal para principiantes y expertos.
-            </p>
+        </div>
 
-            <h2>Características clave</h2>
-            <ul>
-              <li>Sintaxis simple y legible (fácil de mantener).</li>
-              <li>Lenguaje interpretado (no requiere compilación).</li>
-              <li>Multiplataforma (funciona en Windows, Linux y macOS).</li>
-              <li>Ecosistema rico en librerías: NumPy, Pandas, Django, Flask, etc.</li>
-              <li>Ideal para automatización, IA, ciencia de datos, web y más.</li>
-            </ul>
+        <div class="banner-body">
+          <p>
+            En este módulo conocerás los pilares esenciales de Python: qué es, cómo funciona,
+            cómo instalarlo, cómo ejecutar tus primeros programas, variables, tipos de datos,
+            estructuras básicas y más.
+          </p>
 
-            <h2>Instalación y entorno</h2>
-            <p>Para comenzar a programar en Python:</p>
-            <ol class="checkpoint-list">
-              <li>Descarga e instala <a href="https://www.python.org" target="_blank">Python</a> desde la web oficial.</li>
-              <li>Verifica la instalación:</li>
-            </ol>
+          <p>
+            A medida que completes las lecciones, irás desbloqueando nuevos contenidos,
+            infografías visuales, un checkpoint interactivo y finalmente la evaluación
+            final del módulo.
+          </p>
 
-            <pre class="code-snippet">python --version</pre>
-
-            <p>Usa un editor como <strong>VS Code</strong> o <strong>Jupyter Notebook</strong>.</p>
-
-            <h2>Tu primer programa</h2>
-            <pre class="code-snippet">print("¡Hola, mundo!")</pre>
-            <p>
-              Este clásico “Hola Mundo” imprime texto en consola. En Python, <code>print()</code> es la función más básica para mostrar información.
-            </p>
+          <div class="banner-badge">
+            <span class="badge">Nivel: Principiante</span>
+            <span class="badge">Duración aproximada: 1 hora</span>
+            <span class="badge">Incluye evaluación final ✔</span>
           </div>
-        </section>
+        </div>
 
-        <section id="texto" class="section hidden">
-          <div class="section-header">
-            <h1>Sintaxis, Variables y Tipos de Datos</h1>
-          </div>
-          <div class="content-block">
-            <h2>Indentación y estructura</h2>
-            <p>Python utiliza <strong>indentación</strong> (espacios o tabulaciones) para definir bloques de código.  
-            No usa llaves ni punto y coma, lo que mejora la legibilidad.</p>
-
-            <pre class="code-snippet">if 5 > 2:
-    print("Cinco es mayor que dos")  # Correcto
-else:
-    print("Error de lógica")</pre>
-
-            <h2>Variables y tipado dinámico</h2>
-            <p>En Python no es necesario declarar el tipo de variable. El intérprete lo infiere automáticamente.</p>
-            <pre class="code-snippet">nombre = "Alex"
-edad = 22
-pi = 3.1416
-activo = True</pre>
-
-            <h2>Tipos de datos básicos</h2>
-            <ul>
-              <li><strong>int</strong> - Números enteros</li>
-              <li><strong>float</strong> - Números con decimales</li>
-              <li><strong>str</strong> - Cadenas de texto</li>
-              <li><strong>bool</strong> - Valores booleanos</li>
-              <li><strong>list</strong> - Listas ordenadas y mutables</li>
-              <li><strong>tuple</strong> - Tuplas inmutables</li>
-              <li><strong>dict</strong> - Claves y valores</li>
-            </ul>
-
-            <h2>Conversión de tipos</h2>
-            <pre class="code-snippet">edad = "23"
-edad = int(edad)
-print(type(edad))</pre>
-
-            <h2>Errores comunes</h2>
-            <ul>
-              <li>Usar mayúsculas distintas: <code>Print()</code> no es lo mismo que <code>print()</code>.</li>
-              <li>Olvidar los dos puntos <code>:</code> al final de estructuras.</li>
-              <li>Desalinear la indentación (error frecuente en principiantes).</li>
-            </ul>
-
-            <h2>Ejercicio guiado</h2>
-            <pre class="code-snippet">nombre = input("¿Cuál es tu nombre? ")
-edad = int(input("¿Cuántos años tienes? "))
-print(f"Hola {nombre}, el próximo año tendrás {edad + 1} años.")</pre>
-          </div>
-        </section>
-
-        <section id="imagen" class="section hidden">
-          <div class="section-header">
-            <h1>Visualizando los Tipos de Datos</h1>
-          </div>
-          <div class="content-block">
-            <p>La siguiente infografía muestra cómo se estructuran los principales tipos de datos en Python:</p>
-            <img src="https://cdn.programiz.com/sites/tutorial2program/files/python-data-types.jpg" alt="Tipos de datos en Python" class="content-image">
-            <p>Comprender los tipos de datos es esencial para manipular información de manera eficiente, especialmente en proyectos de análisis o automatización.</p>
-          </div>
-        </section>
-
-        <section id="video" class="section hidden">
-          <div class="section-header gradient">
-            <h1>Video: Introducción práctica</h1>
-          </div>
-          <div class="content-block">
-            <p>En este video aprenderás a ejecutar tus primeros scripts, configurar tu entorno y comprender el ciclo de ejecución de Python.</p>
-            <iframe width="700" height="395" src="https://www.youtube.com/embed/rfscVS0vtbw" title="Introducción a Python" frameborder="0" allowfullscreen></iframe>
-          </div>
-        </section>
-
-        <section id="audio" class="section hidden">
-          <div class="section-header gradient">
-            <h1>Audio: Conceptos Fundamentales</h1>
-          </div>
-          <div class="content-block">
-            <p>Escucha esta narración para reforzar los principios básicos de ejecución, lectura de código e indentación.</p>
-            <audio controls>
-              <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-            </audio>
-          </div>
-        </section>
-
-        <section id="checkpoint" class="section hidden">
-          <div class="section-header gradient">
-            <h1>Checkpoint: Refuerzo de Conocimientos</h1>
-          </div>
-          <div class="content-block checkpoint-block">
-            <p><strong>Evalúa tus conocimientos</strong> con estas preguntas rápidas:</p>
-
-            <ol class="checkpoint-list">
-              <li>¿Qué comando muestra texto en la consola?<br><code>print()</code></li>
-
-              <li>¿Cuál es el tipo de dato de la siguiente expresión?<br>
-                <pre class="inline-code">"True"</pre>
-              </li>
-
-              <li>¿Qué error produce este código?<br>
-                <pre class="code-snippet">if 5 > 2
-    print("Correcto")</pre>
-              </li>
-
-              <li>¿Cómo se comenta una línea en Python?<br><code># comentario</code></li>
-            </ol>
-
-            <div class="checkpoint-options">
-              <button>print()</button>
-              <button>bool</button>
-              <button>SyntaxError</button>
-              <button># comentario</button>
-            </div>
-          </div>
-        </section>
-
-        <section id="evaluacion" class="section hidden">
-          <div class="section-header gradient">
-            <h1>Evaluación Práctica</h1>
-          </div>
-          <div class="content-block">
-            <p>Desarrolla un programa que pida un número y determine si es par o impar:</p>
-            <pre class="code-snippet">numero = int(input("Introduce un número: "))
-if numero % 2 == 0:
-    print("El número es par")
-else:
-    print("El número es impar")</pre>
-
-            <p>Agrega validación de errores con <code>try-except</code> y explica tu código con comentarios.</p>
-          </div>
-        </section>
-
-        <section id="seguimiento" class="section hidden">
-          <div class="section-header gradient">
-            <h1>Seguimiento y Retroalimentación</h1>
-          </div>
-          <div class="content-block">
-            <p><strong>Progreso del módulo:</strong> 100%</p>
-            <div class="progress-bar-custom">
-              <div class="progress-bar-fill" style="width: 100%;"></div>
-            </div>
-            <p>Excelente trabajo, Alex 
-            Has completado el módulo de Fundamentos de Python con éxito.  
-            En el siguiente aprenderás sobre <strong>Estructuras de Control y Bucles</strong>.</p>
-          </div>
-        </section>
-
-      </div>
+      </section>
     </main>
   </div>
 
-  <script src="/js/sidebar.js"></script>
+  <script type="module" src="/js/courseData.js"></script>
+  <script type="module" src="/js/sidebarDynamic.js"></script>
+  <script type="module" src="/js/lessonLoader.js"></script>
+  <script>
+    loadLesson("overview");
+  </script>
+
 </body>
 </html>
