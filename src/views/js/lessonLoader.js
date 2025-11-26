@@ -1,3 +1,4 @@
+/* global refreshSidebar, loadLesson */
 import { courseData } from "./courseData.js";
 
 function findLesson(id) {
@@ -500,8 +501,8 @@ window.completeLesson = function (lessonId) {
 
 //sección 1
 window.gradeIntroPython = function () {
-  const q1 = document.querySelector('input[name="q1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"q1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"q2\"]:checked")?.value;
   const q3 = document.getElementById("q3").value.trim();
 
   if (!q1 || !q2 || q3 === "") {
@@ -532,8 +533,8 @@ window.gradeIntroPython = function () {
 
 //seciion2
 window.gradeInstallLesson = function () {
-  const q1 = document.querySelector('input[name="qi1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="qi2"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"qi1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"qi2\"]:checked")?.value;
   const q3 = document.getElementById("qi3").value.trim();
 
   if (!q1 || !q2 || q3 === "") {
@@ -562,8 +563,8 @@ window.gradeInstallLesson = function () {
 
 //sección 3
 window.gradeHolaMundo = function () {
-  const q1 = document.querySelector('input[name="qh1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="qh2"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"qh1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"qh2\"]:checked")?.value;
   const q3 = document.getElementById("qh3").value.trim();
 
   if (!q1 || !q2 || q3 === "") {
@@ -594,8 +595,8 @@ window.gradeHolaMundo = function () {
 
 //seccion4
 window.gradeVariables = function () {
-  const q1 = document.querySelector('input[name="qv1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="qv2"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"qv1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"qv2\"]:checked")?.value;
   const q3 = document.getElementById("qv3").value.trim();
 
   if (!q1 || !q2 || q3 === "") {
@@ -624,8 +625,8 @@ window.gradeVariables = function () {
 
 //sección 5
 window.gradeTipos = function () {
-  const q1 = document.querySelector('input[name="qt1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="qt2"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"qt1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"qt2\"]:checked")?.value;
   const q3 = document.getElementById("qt3").value.trim();
 
   if (!q1 || !q2 || q3 === "") {
@@ -652,8 +653,8 @@ window.gradeTipos = function () {
 
 //quiz
 window.gradeCheckpoint1 = function () {
-  const q1 = document.querySelector('input[name="cq1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="cq2"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"cq1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"cq2\"]:checked")?.value;
   const q3 = document.getElementById("cq3").value.trim();
 
   if (!q1 || !q2 || q3 === "") {
@@ -684,11 +685,11 @@ window.gradeCheckpoint1 = function () {
 
 //Final
 window.gradeFinalExam = function () {
-  const q1 = document.querySelector('input[name="fe1"]:checked')?.value;
-  const q2 = document.querySelector('input[name="fe2"]:checked')?.value;
-  const q3 = document.querySelector('input[name="fe3"]:checked')?.value;
-  const q4 = document.querySelector('input[name="fe4"]:checked')?.value;
-  const q5 = document.querySelector('input[name="fe5"]:checked')?.value;
+  const q1 = document.querySelector("input[name=\"fe1\"]:checked")?.value;
+  const q2 = document.querySelector("input[name=\"fe2\"]:checked")?.value;
+  const q3 = document.querySelector("input[name=\"fe3\"]:checked")?.value;
+  const q4 = document.querySelector("input[name=\"fe4\"]:checked")?.value;
+  const q5 = document.querySelector("input[name=\"fe5\"]:checked")?.value;
   const q6 = document.getElementById("fe6").value.trim();
 
   if (!q1 || !q2 || !q3 || !q4 || !q5 || q6 === "") {

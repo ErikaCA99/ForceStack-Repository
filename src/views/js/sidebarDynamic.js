@@ -1,4 +1,6 @@
+/* global refreshSidebar, loadLesson */
 import { courseData } from "./courseData.js";
+import { loadLesson } from "./lessonLoader.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarContainer = document.getElementById("sidebar-container");
@@ -21,10 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
         lesson.unlocked ||
         localStorage.getItem(`${lesson.id}_unlocked`) === "true";
 
-        let icon = `<i class="fa-solid fa-lock"></i>`; //bloqueado
+        let icon = "<i class=\"fa-solid fa-lock\"></i>"; //bloqueado
 
-        if (unlocked) icon = `<i class="fa-solid fa-lock-open"></i>`; 
-        if (completed) icon = `<i class="fa-solid fa-circle-check"></i>`; 
+        if (unlocked) icon = "<i class=\"fa-solid fa-lock-open\"></i>"; 
+        if (completed) icon = "<i class=\"fa-solid fa-circle-check\"></i>"; 
         if (lesson.id === "overview") icon = "";
 
       html += `
@@ -73,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const overviewLink = document.querySelector(
-    '.lesson-link[data-id="overview"]'
+    ".lesson-link[data-id=\"overview\"]"
   );
   if (overviewLink) {
     overviewLink.classList.add("active");
@@ -100,9 +102,9 @@ window.refreshSidebar = function () {
         lesson.unlocked ||
         localStorage.getItem(`${lesson.id}_unlocked`) === "true";
 
-      let icon = `<i class="fa-solid fa-lock"></i>`;
-      if (unlocked) icon = `<i class="fa-solid fa-lock-open"></i>`;
-      if (completed) icon = `<i class="fa-solid fa-circle-check"></i>`;
+      let icon = "<i class=\"fa-solid fa-lock\"></i>";
+      if (unlocked) icon = "<i class=\"fa-solid fa-lock-open\"></i>";
+      if (completed) icon = "<i class=\"fa-solid fa-circle-check\"></i>";
       if (lesson.id === "overview") icon = "";
 
       html += `
