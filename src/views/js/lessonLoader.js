@@ -764,7 +764,7 @@ function renderOverview() {
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python Logo">
         <div>
           <h1>Fundamentos de Python</h1>
-          <p class="subtitle">Tu primer acercamiento profesional al lenguaje más usado del mundo 🐍✨</p>
+          <p class="subtitle">Tu primer acercamiento profesional al lenguaje más usado del mundo.</p>
         </div>
       </div>
 

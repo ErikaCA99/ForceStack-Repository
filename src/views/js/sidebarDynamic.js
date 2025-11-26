@@ -21,8 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
         lesson.unlocked ||
         localStorage.getItem(`${lesson.id}_unlocked`) === "true";
 
-      let icon = unlocked ? "🔓" : "🔒";
-      if (completed) icon = "✔️";
+        let icon = `<i class="fa-solid fa-lock"></i>`; //bloqueado
+
+        if (unlocked) icon = `<i class="fa-solid fa-lock-open"></i>`; 
+        if (completed) icon = `<i class="fa-solid fa-circle-check"></i>`; 
+        if (lesson.id === "overview") icon = "";
 
       html += `
         <li>
@@ -30,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
             class="lesson-link ${unlocked ? "unlocked" : "locked"}" 
             data-id="${lesson.id}" 
             data-index="${index}">
-            ${icon} ${lesson.title}
+            ${icon} <span class="lesson-title">${lesson.title}</span>
           </a>
         </li>
       `;
@@ -97,8 +100,10 @@ window.refreshSidebar = function () {
         lesson.unlocked ||
         localStorage.getItem(`${lesson.id}_unlocked`) === "true";
 
-      let icon = unlocked ? "🔓" : "🔒";
-      if (completed) icon = "✔️";
+      let icon = `<i class="fa-solid fa-lock"></i>`;
+      if (unlocked) icon = `<i class="fa-solid fa-lock-open"></i>`;
+      if (completed) icon = `<i class="fa-solid fa-circle-check"></i>`;
+      if (lesson.id === "overview") icon = "";
 
       html += `
                 <li>
@@ -106,7 +111,7 @@ window.refreshSidebar = function () {
                         class="lesson-link ${unlocked ? "unlocked" : "locked"}"
                         data-id="${lesson.id}"
                         data-index="${index}">
-                        ${icon} ${lesson.title}
+                        ${icon} <span class="lesson-title">${lesson.title}</span>
                     </a>
                 </li>
             `;
