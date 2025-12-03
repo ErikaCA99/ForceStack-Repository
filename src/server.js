@@ -16,6 +16,7 @@ app.use(express.static("src/views"));
 app.use("/css", express.static("src/views/css"));
 app.use("/js", express.static("src/views/js"));
 app.use("/components", express.static("src/views/components"));
+app.use("/pages", express.static("src/views/pages"));
 
 app.use(
   session({
@@ -76,9 +77,6 @@ app.get("/registro", (req, res) => {
   res.sendFile("registro.html", { root: "src/views" });
 });
 
-app.get("/dashboard.html", (req, res) => {
-  res.sendFile("dashboard.html", { root: "src/views" });
-});
 
 app.listen(process.env.PORT, () =>
   console.log(`Servidor corriendo en http://127.0.0.1:${process.env.PORT}`)
