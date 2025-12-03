@@ -146,7 +146,7 @@ const generarTokenYRedirigir = (req, res) => {
   const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
     expiresIn: "2h",
   });
-  res.redirect(`/dashboard.html?token=${token}`);
+  res.redirect(`/dashboard?token=${token}`);
 };
 
 export const googleCallback = generarTokenYRedirigir;
