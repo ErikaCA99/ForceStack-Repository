@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Cuenta de Usuario</title>
-    <link rel="stylesheet" href="/src/views/css/style_registro.css">
+    <link rel="stylesheet" href="/css/style_registro.css">
 </head>
 <body>
     <div class="container">
@@ -15,39 +15,39 @@
 
         <form id="registrationForm" novalidate>
             <div class="form-group">
-                <label for="fullName">Nombre </label>
+                <label for="nombre">Nombre </label>
                 <input 
                     type="text" 
-                    id="fullName" 
-                    name="fullName"
+                    id="nombre" 
+                    name="nombre"
                     class="form-input" 
                     placeholder="Ingresa tu nombre"
                     required
                     autocomplete="name"
                 >
-                <div class="error-message" id="fullNameError"></div>
+                <div class="error-message" id="nombreError"></div>
             </div>
 
             <div class="form-group">
-                <label for="fullName">Apellidos</label>
+                <label for="apellido">Apellidos</label>
                 <input 
                     type="text" 
-                    id="fullName" 
-                    name="fullName"
+                    id="apellido" 
+                    name="apellido"
                     class="form-input" 
                     placeholder="Ingresa tus apellidos"
                     required
                     autocomplete="name"
                 >
-                <div class="error-message" id="fullNameError"></div>
+                <div class="error-message" id="apellidoError"></div>
             </div>
 
             <div class="form-group">
-                <label for="email">Correo Electrónico</label>
+                <label for="correo">Correo Electrónico</label>
                 <input 
                     type="email" 
-                    id="email" 
-                    name="email"
+                    id="correo" 
+                    name="correo"
                     class="form-input" 
                     placeholder="tu.correo@ejemplo.com"
                     required
@@ -61,8 +61,8 @@
                 <div class="input-wrapper">
                     <input 
                         type="password" 
-                        id="password" 
-                        name="password"
+                        id="contraseña" 
+                        name="contraseña"
                         class="form-input" 
                         placeholder="Ingresa tu contraseña"
                         required
@@ -109,5 +109,5 @@
     </div>
 
 </body>
-<script src="/src/views/js/registro.js"></script>
+<script src="/js/registro.js"></script>
 </html>

@@ -35,13 +35,13 @@ async function findOrCreateUser(email, nombre, apellido, provider) {
       const fechaActual = new Date();
 
       const insertQuery = `
-        INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
+        INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_registro)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *
       `;
 
       const nuevo = await pool.query(insertQuery, [
-        nombre || "", 
+        nombre || "",
         apellido || "",
         email,
         passDummy,
@@ -146,7 +146,7 @@ const generarTokenYRedirigir = (req, res) => {
   const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
     expiresIn: "2h",
   });
-  res.redirect(`/dashboard.html?token=${token}`);
+  res.redirect(`/dashboard?token=${token}`);
 };
 
 export const googleCallback = generarTokenYRedirigir;
@@ -155,7 +155,6 @@ export const microsoftCallback = generarTokenYRedirigir;
 // --- REGISTRO MANUAL (Endpoint API) ---
 export const registerUser = async (req, res) => {
   try {
-    
     const { nombre, apellido, correo, contraseña, rol } = req.body;
 
     if (!nombre || !apellido || !correo || !contraseña) {
@@ -173,17 +172,89 @@ export const registerUser = async (req, res) => {
     }
 
     const hash = await bcrypt.hash(contraseña, 10);
-    const fecha_creacion = new Date();
+    const fechaRegistro = new Date();
 
-    await pool.query(
-      `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion]
+    try {
+      await pool.query(
+        `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_registro)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [nombre, apellido, correo, hash, rol || "estudiante", fechaRegistro]
+      );
+    } catch (sqlErr) {
+      console.error("SQL Error on INSERT users:", sqlErr);
+      throw sqlErr;
+    }
+
+    // Obtener el usuario recién creado para devolverlo con token
+    const result = await pool.query(
+      "SELECT id_user AS id, nombre, apellido, correo, rol, fecha_registro FROM users WHERE correo = $1 LIMIT 1",
+      [correo]
+    );
+    const usuario = result.rows[0];
+
+    const token = jwt.sign(
+      { id: usuario.id, correo: usuario.correo },
+      process.env.JWT_SECRET || "secret_key",
+      {
+        expiresIn: "2h",
+      }
     );
 
-    res.status(201).json({ message: "Usuario registrado exitosamente" });
+    res.status(201).json({
+      message: "Usuario registrado exitosamente",
+      user: usuario,
+      token,
+    });
   } catch (error) {
     console.error("Error al registrar:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+};
+
+// --- LOGIN MANUAL ---
+export const loginUser = async (req, res) => {
+  try {
+    const { correo, contraseña } = req.body;
+    if (!correo || !contraseña) {
+      return res
+        .status(400)
+        .json({ message: "Correo y contraseña son obligatorios" });
+    }
+
+    const result = await pool.query(
+      "SELECT * FROM users WHERE correo = $1 LIMIT 1",
+      [correo]
+    );
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: "Credenciales inválidas" });
+    }
+
+    const usuario = result.rows[0];
+    const match = await bcrypt.compare(contraseña, usuario.contraseña);
+    if (!match) {
+      return res.status(401).json({ message: "Credenciales inválidas" });
+    }
+
+    // No enviar la contraseña en la respuesta
+    const safeUser = {
+      id: usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      correo: usuario.correo,
+      rol: usuario.rol,
+    };
+
+    const token = jwt.sign(
+      { id: safeUser.id, correo: safeUser.correo },
+      process.env.JWT_SECRET || "secret_key",
+      {
+        expiresIn: "2h",
+      }
+    );
+
+    res.json({ message: "Autenticación exitosa", user: safeUser, token });
+  } catch (error) {
+    console.error("Error en login:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 };

@@ -16,7 +16,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login.html",
+    failureRedirect: "/",
     session: false,
   }),
   googleCallback
@@ -34,7 +34,7 @@ router.get(
 router.get(
   "/microsoft/callback",
   passport.authenticate("microsoft", {
-    failureRedirect: "/login.html?error=microsoft_auth_failed",
+    failureRedirect: "/?error=microsoft_auth_failed",
     session: false,
   }),
   microsoftCallback

@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     passwordInput.setAttribute("type", type);
     toggleBtn.innerHTML =
       type === "password"
-        ? "<i class=\"fas fa-eye\"></i>"
-        : "<i class=\"fas fa-eye-slash\"></i>";
+        ? '<i class="fas fa-eye"></i>'
+        : '<i class="fas fa-eye-slash"></i>';
   });
 
   form.addEventListener("submit", async (e) => {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         alert(`✅ Bienvenido ${data.user.correo}`);
         localStorage.setItem("token", data.token);
         // Redirigir al dashboard o página principal
-        window.location.href = "pages/dashboard.html";
+        window.location.href = "/dashboard";
       } else {
         alert(`❌ ${data.message}`);
       }

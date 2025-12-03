@@ -4,6 +4,7 @@ import pkg from "pg";
 import passport from "passport";
 import session from "express-session";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 const { Pool } = pkg;
@@ -47,7 +48,9 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
     } catch (err) {
       retries--;
       console.log(
-        `⚠️ Reintentando conexión (${MAX_RETRIES - retries}/${MAX_RETRIES})...${err.message}`
+        `⚠️ Reintentando conexión (${MAX_RETRIES - retries}/${MAX_RETRIES})...${
+          err.message
+        }`
       );
       await new Promise((res) => setTimeout(res, RETRY_DELAY));
     }
@@ -59,6 +62,7 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
 await connectWithRetry();
 
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile("pages/login.html", { root: "src/views" });
@@ -73,11 +77,16 @@ app.get("/topic_uno", (req, res) => {
 });
 
 app.get("/registro", (req, res) => {
-  res.sendFile("registro.html", { root: "src/views" });
+  res.sendFile("pages/registro.html", { root: "src/views" });
 });
 
+// Rutas antiguas con sufijo .html: redirigir a las rutas limpias
 app.get("/dashboard.html", (req, res) => {
-  res.sendFile("dashboard.html", { root: "src/views" });
+  res.redirect(302, "/dashboard");
+});
+
+app.get("/registro.html", (req, res) => {
+  res.redirect(302, "/registro");
 });
 
 app.listen(process.env.PORT, () =>
