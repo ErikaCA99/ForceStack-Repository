@@ -60,6 +60,7 @@ async function findOrCreateUser(email, nombre, apellido, provider, foto = "") {
 
     return usuario;
   } catch (error) {
+    console.error("Error en findOrCreateUser:", error);
     throw error;
   }
 }
