@@ -19,7 +19,6 @@ const pool = new Pool({
 });
 
 async function findOrCreateUser(email, nombre, apellido, provider, foto = "") {
-  try {
     const result = await pool.query(
       "SELECT * FROM users WHERE correo = $1 LIMIT 1",
       [email]
@@ -59,10 +58,6 @@ async function findOrCreateUser(email, nombre, apellido, provider, foto = "") {
     }
 
     return usuario;
-  } catch (error) {
-    console.error("Error en findOrCreateUser:", error);
-    throw error;
-  }
 }
 
 //GOOGLE
