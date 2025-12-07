@@ -125,31 +125,14 @@ body {
     width: 100%;
 }
 
-.profile-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    transition: var(--transition);
-    background-color: var(--border-color);
-}
-
-.profile-icon:hover {
-    transform: scale(1.05);
-    box-shadow: var(--shadow-md);
-}
-
-.profile-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 /* ===== CONTENIDO PRINCIPAL ===== */
 .main-content {
-    flex: 1;
-    padding: var(--spacing-xl) 0;
+    padding-top: 110px; 
+    padding-bottom: 40px; 
+    min-height: calc(100vh - 110px); 
+    overflow-x: hidden; 
+    overflow-y: auto;  
 }
 
 .welcome-header {
@@ -314,7 +297,7 @@ body {
 .footer {
     background-color: var(--white);
     padding: var(--spacing-lg) 0;
-    margin-top: var(--spacing-xl);
+    margin-top: 0; /* ELIMINA EL ESPACIO GRIS */
     border-top: 1px solid var(--border-color);
 }
 
@@ -378,4 +361,77 @@ body {
   z-index: 999; 
   background: white; 
   box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+}
+
+.profile-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+#navbarUserNameLeft {
+  font-size: 15px;
+  font-weight: 500;
+  color: #2D3748;
+}
+
+#navbarUserImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  display: none;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+}
+
+.profile-menu.show {
+  display: block;
+}
+
+#logoutBtn {
+    padding: 0.6rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    white-space: nowrap; 
+    width: auto; 
+}
+
+#logoutBtn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+#logoutBtn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.profile-menu p {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+body {
+    overflow: hidden; 
 }
