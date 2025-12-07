@@ -18,7 +18,7 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-async function findOrCreateUser(email, nombre, apellido, provider) {
+async function findOrCreateUser(email, nombre, apellido, provider, foto = "") {
   try {
     const result = await pool.query(
       "SELECT * FROM users WHERE correo = $1 LIMIT 1",
@@ -26,41 +26,41 @@ async function findOrCreateUser(email, nombre, apellido, provider) {
     );
 
     if (result.rows.length === 0) {
-      console.log(`✅ Registrando nuevo usuario desde ${provider}: ${email}`);
+      console.log(`Registrando nuevo usuario desde ${provider}: ${email}`);
 
-      const rolPorDefecto = "estudiante";
-      // Nota: Para usuarios OAuth generamos una contraseña dummy o vacía,
-      // pero encriptada por si acaso el sistema requiere hash.
       const passDummy = await bcrypt.hash("OAUTH_USER_PASS", 10);
       const fechaActual = new Date();
 
       const insertQuery = `
-        INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion, foto)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *
       `;
 
       const nuevo = await pool.query(insertQuery, [
-        nombre || "", 
-        apellido || "",
+        nombre,
+        apellido,
         email,
         passDummy,
-        rolPorDefecto,
+        "estudiante",
         fechaActual,
+        foto
       ]);
-
-      console.log(`✅ Usuario ${email} creado exitosamente.`);
       return nuevo.rows[0];
     }
 
-    // 3. Usuario ya existente
     const usuario = result.rows[0];
-    console.log(
-      `✅ Usuario ${usuario.correo} autenticado (Rol: ${usuario.rol})`
-    );
+    if (foto && usuario.foto !== foto) {
+      await pool.query("UPDATE users SET foto = $1 WHERE correo = $2", [
+        foto,
+        email
+      ]);
+      usuario.foto = foto;
+    }
+
     return usuario;
   } catch (error) {
-    console.error(`❌ Error verificando usuario en ${provider}:`, error);
+    console.error("Error en findOrCreateUser:", error);
     throw error;
   }
 }
@@ -78,12 +78,14 @@ passport.use(
         const correo = profile.emails[0].value;
         const nombre = profile.name?.givenName || "";
         const apellido = profile.name?.familyName || "";
+        const foto = profile.photos?.[0]?.value || "";
 
         const usuario = await findOrCreateUser(
           correo,
           nombre,
           apellido,
-          "Google"
+          "Google",
+          foto
         );
         return done(null, usuario);
       } catch (error) {
@@ -120,12 +122,14 @@ passport.use(
 
         const nombre = profile.name?.givenName || profile.displayName || "";
         const apellido = profile.name?.familyName || "";
+        const foto = profile.photos?.[0]?.value || "";
 
         const usuario = await findOrCreateUser(
           correo,
           nombre,
           apellido,
-          "Microsoft"
+          "Microsoft",
+          foto
         );
         return done(null, usuario);
       } catch (error) {
@@ -143,10 +147,23 @@ const generarTokenYRedirigir = (req, res) => {
   if (!req.user) {
     return res.redirect("/login.html?error=usuario_no_encontrado");
   }
+
   const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
     expiresIn: "2h",
   });
-  res.redirect(`/dashboard?token=${token}`);
+
+  const datos = {
+    token,
+    nombre: req.user.nombre,
+    apellido: req.user.apellido,
+    correo: req.user.correo,
+    foto: req.user.foto || req.user.profile_picture || ""
+  };
+
+  //Serializamos los datos para enviarlos en la url
+  const queryString = new URLSearchParams(datos).toString();
+
+  res.redirect(`/dashboard?${queryString}`);
 };
 
 export const googleCallback = generarTokenYRedirigir;
@@ -176,8 +193,8 @@ export const registerUser = async (req, res) => {
     const fecha_creacion = new Date();
 
     await pool.query(
-      `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion, foto)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion]
     );
 
