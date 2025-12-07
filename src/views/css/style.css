@@ -249,3 +249,12 @@ h1 {
     transform: translateY(0);
   }
 }
+
+html, body {
+  overflow: hidden !important;
+  height: 100vh;
+}
+
+body {
+    overflow: hidden; 
+}

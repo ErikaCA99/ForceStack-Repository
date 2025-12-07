@@ -139,31 +139,43 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+passport.serializeUser((user, done) => done(null, user.id));
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    done(null, result.rows[0]);
+  } catch (e) {
+    done(e);
+  }
+});
+
 
 // Generador de Token reutilizable
-const generarTokenYRedirigir = (req, res) => {
+const generarTokenYRedirigir = (req, res, next) => {
   if (!req.user) {
     return res.redirect("/login.html?error=usuario_no_encontrado");
   }
 
-  const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
-    expiresIn: "2h",
+  req.login(req.user, (err) => {
+    if (err) return next(err);
+
+    const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
+      expiresIn: "2h",
+    });
+
+    const datos = {
+      token,
+      nombre: req.user.nombre,
+      apellido: req.user.apellido,
+      correo: req.user.correo,
+      foto: req.user.foto || req.user.profile_picture || ""
+    };
+
+    const queryString = new URLSearchParams(datos).toString();
+
+    return res.redirect(`/dashboard?${queryString}`);
   });
-
-  const datos = {
-    token,
-    nombre: req.user.nombre,
-    apellido: req.user.apellido,
-    correo: req.user.correo,
-    foto: req.user.foto || req.user.profile_picture || ""
-  };
-
-  //Serializamos los datos para enviarlos en la url
-  const queryString = new URLSearchParams(datos).toString();
-
-  res.redirect(`/dashboard?${queryString}`);
 };
 
 export const googleCallback = generarTokenYRedirigir;
@@ -195,7 +207,7 @@ export const registerUser = async (req, res) => {
     await pool.query(
       `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion, foto)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion]
+      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion, null]
     );
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });
@@ -204,3 +216,22 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Error en el servidor" });
   }
 };
+
+export const isProfessor = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ error: "No autenticado" });
+
+  if (req.user.rol === "profesor" || req.user.rol === "profesor editor") {
+    return next();
+  }
+
+  return res.status(403).json({ error: "No autorizado" });
+};
+
+export const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({ error: "No autenticado" });
+};
+
+
