@@ -1,6 +1,5 @@
 /** @type {import('jest').Config} */
 const config = {
-  // Entorno de prueba
   testEnvironment: "node",
 
   // Rutas de los archivos de prueba
@@ -9,22 +8,20 @@ const config = {
     "**/?(*.)+(spec|test).js"
   ],
 
-  // Excluye la carpeta node_modules de la búsqueda
-  testPathIgnorePatterns: [
-    "/node_modules/"
-  ],
+  // Evita problemas con node_modules
+  testPathIgnorePatterns: ["/node_modules/"],
 
-  // Módulos que no deben ser transformados por Babel
+  // No usamos Babel ni transformadores
+  transform: {},
+
   transformIgnorePatterns: [
     "/node_modules/(?!@babel/preset-env)"
   ],
 
-  // Mapeo de módulos para resolver rutas
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1"
   },
 
-  // Directorio para almacenar la caché de Jest
   cacheDirectory: "<rootDir>/.jest_cache"
 };
 

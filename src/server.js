@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import pkg from "pg";
 import passport from "passport";
-import session from "express-session"; 
-import authRoutes from "./routes/authRoutes.js"; 
+import session from "express-session";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 const { Pool } = pkg;
@@ -16,6 +16,7 @@ app.use(express.static("src/views"));
 app.use("/css", express.static("src/views/css"));
 app.use("/js", express.static("src/views/js"));
 app.use("/components", express.static("src/views/components"));
+app.use("/pages", express.static("src/views/pages"));
 
 app.use(
   session({
@@ -71,6 +72,11 @@ app.get("/dashboard", (req, res) => {
 app.get("/topic_uno", (req, res) => {
   res.sendFile("pages/topic_uno.html", { root: "src/views" });
 });
+
+app.get("/registro", (req, res) => {
+  res.sendFile("registro.html", { root: "src/views" });
+});
+
 
 app.listen(process.env.PORT, () =>
   console.log(`Servidor corriendo en http://127.0.0.1:${process.env.PORT}`)

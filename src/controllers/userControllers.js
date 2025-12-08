@@ -1,12 +1,15 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as MicrosoftStrategy } from "passport-microsoft";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 import pkg from "pg";
 
 dotenv.config();
 const { Pool } = pkg;
 
+// Configuración de la Base de Datos
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -15,74 +18,220 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+async function findOrCreateUser(email, nombre, apellido, provider, foto = "") {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM users WHERE correo = $1 LIMIT 1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      console.log(`Registrando nuevo usuario desde ${provider}: ${email}`);
+
+      const passDummy = await bcrypt.hash("OAUTH_USER_PASS", 10);
+      const fechaActual = new Date();
+
+      const insertQuery = `
+        INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion, foto)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *
+      `;
+
+      const nuevo = await pool.query(insertQuery, [
+        nombre,
+        apellido,
+        email,
+        passDummy,
+        "estudiante",
+        fechaActual,
+        foto
+      ]);
+      return nuevo.rows[0];
+    }
+
+    const usuario = result.rows[0];
+    if (foto && usuario.foto !== foto) {
+      await pool.query("UPDATE users SET foto = $1 WHERE correo = $2", [
+        foto,
+        email
+      ]);
+      usuario.foto = foto;
+    }
+
+    return usuario;
+  } catch (error) {
+    console.error("Error en findOrCreateUser:", error);
+    throw error;
+  }
+}
+
+//GOOGLE
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback", // usa localhost si estás en Docker
+      callbackURL: "http://localhost:3000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const correoGoogle = profile.emails[0].value;
-        //const nombreGoogle = profile.displayName;
+        const correo = profile.emails[0].value;
+        const nombre = profile.name?.givenName || "";
+        const apellido = profile.name?.familyName || "";
+        const foto = profile.photos?.[0]?.value || "";
 
-        // Buscar si el correo ya existe
-        const result = await pool.query(
-          "SELECT correo, rol FROM users WHERE correo = $1 LIMIT 1",
-          [correoGoogle]
-        );
-
-        if (result.rows.length === 0) {
-          //  Usuario no encontrado → lo registramos
-          console.log(` Registrando nuevo usuario: ${correoGoogle}`);
-
-          const rolPorDefecto = "estudiante";
-          const nuevaContrasena = 1234; // el usuario inició con Google
-          const insertQuery = `
-            INSERT INTO users (correo, contrasena, rol)
-            VALUES ($1, $2, $3)
-            RETURNING correo, rol
-          `;
-          const nuevo = await pool.query(insertQuery, [
-            correoGoogle,
-            nuevaContrasena,
-            rolPorDefecto,
-          ]);
-
-          console.log(
-            ` Usuario ${correoGoogle} creado exitosamente con rol ${rolPorDefecto}`
-          );
-          return done(null, nuevo.rows[0]);
-        }
-
-        //  Usuario ya existente
-        const usuario = result.rows[0];
-        console.log(
-          ` Usuario ${usuario.correo} autenticado con rol ${usuario.rol}`
+        const usuario = await findOrCreateUser(
+          correo,
+          nombre,
+          apellido,
+          "Google",
+          foto
         );
         return done(null, usuario);
       } catch (error) {
-        console.error(" Error verificando o creando el usuario:", error);
         return done(error, null);
       }
     }
   )
 );
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+//MICROSOFT
+passport.use(
+  new MicrosoftStrategy(
+    {
+      clientID: process.env.MICROSOFT_CLIENT_ID,
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/microsoft/callback",
+      scope: ["user.read"],
+      tenant: process.env.MICROSOFT_TENANT_ID || "common",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Microsoft a veces devuelve el mail en lugares distintos
+        const correo =
+          profile.emails?.[0]?.value ||
+          profile._json?.mail ||
+          profile._json?.userPrincipalName;
 
-// Callback de Google (genera token si el usuario existe o fue creado)
-export const googleCallback = (req, res) => {
+        if (!correo) {
+          return done(
+            new Error("No se pudo obtener el email de Microsoft"),
+            null
+          );
+        }
+
+        const nombre = profile.name?.givenName || profile.displayName || "";
+        const apellido = profile.name?.familyName || "";
+        const foto = profile.photos?.[0]?.value || "";
+
+        const usuario = await findOrCreateUser(
+          correo,
+          nombre,
+          apellido,
+          "Microsoft",
+          foto
+        );
+        return done(null, usuario);
+      } catch (error) {
+        return done(error, null);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, done) => done(null, user.id));
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    done(null, result.rows[0]);
+  } catch (e) {
+    done(e);
+  }
+});
+
+
+// Generador de Token reutilizable
+const generarTokenYRedirigir = (req, res, next) => {
   if (!req.user) {
     return res.redirect("/login.html?error=usuario_no_encontrado");
   }
 
-  const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
-    expiresIn: "2h",
-  });
+  req.login(req.user, (err) => {
+    if (err) return next(err);
 
-  // Redirige con el token al dashboard
-  res.redirect(`/dashboard.html?token=${token}`);
+    const token = jwt.sign(req.user, process.env.JWT_SECRET || "secret_key", {
+      expiresIn: "2h",
+    });
+
+    const datos = {
+      token,
+      nombre: req.user.nombre,
+      apellido: req.user.apellido,
+      correo: req.user.correo,
+      foto: req.user.foto || req.user.profile_picture || ""
+    };
+
+    const queryString = new URLSearchParams(datos).toString();
+
+    return res.redirect(`/dashboard?${queryString}`);
+  });
 };
+
+export const googleCallback = generarTokenYRedirigir;
+export const microsoftCallback = generarTokenYRedirigir;
+
+// --- REGISTRO MANUAL (Endpoint API) ---
+export const registerUser = async (req, res) => {
+  try {
+    
+    const { nombre, apellido, correo, contraseña, rol } = req.body;
+
+    if (!nombre || !apellido || !correo || !contraseña) {
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son obligatorios" });
+    }
+
+    const existe = await pool.query(
+      "SELECT correo FROM users WHERE correo = $1",
+      [correo]
+    );
+    if (existe.rows.length > 0) {
+      return res.status(400).json({ message: "El correo ya está registrado" });
+    }
+
+    const hash = await bcrypt.hash(contraseña, 10);
+    const fecha_creacion = new Date();
+
+    await pool.query(
+      `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion, foto)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion, null]
+    );
+
+    res.status(201).json({ message: "Usuario registrado exitosamente" });
+  } catch (error) {
+    console.error("Error al registrar:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+};
+
+export const isProfessor = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ error: "No autenticado" });
+
+  if (req.user.rol === "profesor" || req.user.rol === "profesor editor") {
+    return next();
+  }
+
+  return res.status(403).json({ error: "No autorizado" });
+};
+
+export const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({ error: "No autenticado" });
+};
+
+

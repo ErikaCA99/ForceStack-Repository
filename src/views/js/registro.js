@@ -2,13 +2,15 @@ class FormValidator {
   constructor(formId) {
     this.form = document.getElementById(formId);
     this.fields = {
-      fullName: document.getElementById("fullName"),
+      nombre: document.getElementById("nombreError"),
+      apellido: document.getElementById("apellidoError"),
       email: document.getElementById("email"),
       password: document.getElementById("password"),
       confirmPassword: document.getElementById("confirmPassword"),
     };
     this.errors = {
-      fullName: document.getElementById("fullNameError"),
+      nombre: document.getElementById("nombreError"),
+      apellido: document.getElementById("apellidoError"),
       email: document.getElementById("emailError"),
       password: document.getElementById("passwordError"),
       confirmPassword: document.getElementById("confirmPasswordError"),

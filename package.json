@@ -8,6 +8,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "lint": "npx eslint . --ext .js,.mjs",
+    "lint:fix": "npx eslint . --ext .js,.mjs --fix",
     "test": "jest --coverage --runInBand"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "passport": "^0.7.0",
     "passport-azure-ad": "^4.3.5",
     "passport-google-oauth20": "^2.0.0",
+    "passport-microsoft": "^2.1.0",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7"
@@ -33,6 +35,7 @@
     "globals": "^16.4.0",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
-    "sequelize-cli": "^6.6.3"
+    "sequelize-cli": "^6.6.3",
+    "supertest": "^7.1.4"
   }
 }
