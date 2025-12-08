@@ -38,7 +38,7 @@ const courseData = [
         id: "tipos-imagen",
         title: "Infografía de datos",
         unlocked: false,
-        type: "image"
+        type: "text"
       },
       {
         id: "quiz1",
