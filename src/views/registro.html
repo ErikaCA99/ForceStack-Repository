@@ -4,110 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Cuenta de Usuario</title>
-    <link rel="stylesheet" href="/src/views/css/style_registro.css">
+    <link rel="stylesheet" href="css/style_registro.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Crea tu cuenta en la Plataforma de Aprendizaje</h1>
-            <p>Comienza tu viaje de aprendizaje con Python.</p>
+    <main class="login-wrapper">
+
+        <div class="login-card">
+
+            <!-- COLUMNA IZQUIERDA -->
+            <div class="login-left">
+                <div class="register-container">
+
+                    <div class="header">
+                        <h1>Crea tu cuenta</h1>
+                        <p>Comienza tu viaje de aprendizaje con Python.</p>
+                    </div>
+
+                    <form id="registrationForm" novalidate>
+
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" class="form-input"
+                                placeholder="Ingresa tu nombre" required>
+                            <div class="error-message" id="nombreError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos</label>
+                            <input type="text" id="apellidos" name="apellidos" class="form-input"
+                                placeholder="Ingresa tus apellidos" required>
+                            <div class="error-message" id="apellidosError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" class="form-input"
+                                placeholder="tu.correo@ejemplo.com" required>
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Contraseña</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="password" name="password" class="form-input"
+                                    placeholder="Ingresa tu contraseña" required>
+                                <button type="button" class="toggle-password" id="togglePassword">👁</button>
+                            </div>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Contraseña</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+                                    placeholder="Confirma tu contraseña" required>
+                                <button type="button" class="toggle-password" id="toggleConfirmPassword">👁</button>
+                            </div>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Registrarse</button>
+                    </form>
+
+                    <p class="footer-text">
+                        ¿Ya tienes una cuenta?
+                        <a href="/">Inicia Sesión</a>
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA -->
+            <div class="login-right">
+            </div>
         </div>
 
-        <form id="registrationForm" novalidate>
-            <div class="form-group">
-                <label for="fullName">Nombre </label>
-                <input 
-                    type="text" 
-                    id="fullName" 
-                    name="fullName"
-                    class="form-input" 
-                    placeholder="Ingresa tu nombre"
-                    required
-                    autocomplete="name"
-                >
-                <div class="error-message" id="fullNameError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="fullName">Apellidos</label>
-                <input 
-                    type="text" 
-                    id="fullName" 
-                    name="fullName"
-                    class="form-input" 
-                    placeholder="Ingresa tus apellidos"
-                    required
-                    autocomplete="name"
-                >
-                <div class="error-message" id="fullNameError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Correo Electrónico</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email"
-                    class="form-input" 
-                    placeholder="tu.correo@ejemplo.com"
-                    required
-                    autocomplete="email"
-                >
-                <div class="error-message" id="emailError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <div class="input-wrapper">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password"
-                        class="form-input" 
-                        placeholder="Ingresa tu contraseña"
-                        required
-                        autocomplete="new-password"
-                    >
-                    <button type="button" class="toggle-password" id="togglePassword" aria-label="Mostrar contraseña">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="error-message" id="passwordError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword">Confirmar Contraseña</label>
-                <div class="input-wrapper">
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        name="confirmPassword"
-                        class="form-input" 
-                        placeholder="Confirma tu contraseña"
-                        required
-                        autocomplete="new-password"
-                    >
-                    <button type="button" class="toggle-password" id="toggleConfirmPassword" aria-label="Mostrar contraseña">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="error-message" id="confirmPasswordError"></div>
-            </div>
-
-            <button type="submit" class="btn-submit">Registrarse</button>
-        </form>
-
-        <p class="footer-text">
-            ¿Ya tienes una cuenta? <a href="#" id="loginLink">Inicia Sesión</a>
-        </p>
-    </div>
+    </main>
 
 </body>
+
 <script src="/src/views/js/registro.js"></script>
 </html>
