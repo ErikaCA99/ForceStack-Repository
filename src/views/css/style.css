@@ -259,10 +259,6 @@ body {
     overflow: hidden; 
 }
 
-/* =========================================
-   NUEVO DISEÑO PROFESIONAL DE DOS COLUMNAS
-   ========================================= */
-
 .login-wrapper {
   min-height: 100vh;
   display: flex;
@@ -282,7 +278,6 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
-/* COLUMNA IZQUIERDA */
 .login-left {
   width: 55%;
   padding: 50px 40px;
@@ -291,7 +286,6 @@ body {
   justify-content: center;
 }
 
-/* Ajuste para tu caja original */
 .login-container {
   width: 100% !important;
   max-width: none !important;
@@ -302,11 +296,10 @@ body {
   text-align: left !important;
 }
 
-/* COLUMNA DERECHA */
 .login-right {
   width: 45%;
   background: url("/img/python.png") no-repeat center center;
-  background-size: cover; /* Hace que ocupe todo el espacio */
+  background-size: cover; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -319,7 +312,6 @@ body {
   filter: drop-shadow(0px 6px 14px rgba(0,0,0,0.15));
 }
 
-/* RESPONSIVE */
 @media (max-width: 850px) {
   .login-card {
     flex-direction: column;
@@ -332,11 +324,11 @@ body {
 
 .login-left h1 {
   font-size: 34px;
-  font-weight: 700;       /* menos pesado */
-  letter-spacing: -0.5px; /* más elegante */
-  margin-top: 5px;       /* baja un poco el título */
+  font-weight: 700;    
+  letter-spacing: -0.5px; 
+  margin-top: 5px;      
   margin-bottom: 5px;
-  color: #1a2b5f;         /* azul elegante */
+  color: #1a2b5f;      
 }
 
 .header {

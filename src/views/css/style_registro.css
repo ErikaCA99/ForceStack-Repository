@@ -180,10 +180,6 @@ body {
   }
 }
 
-/* =========================================
-   IGUALAR DISEÑO AL LOGIN
-   ========================================= */
-
 body {
   background: #eef3ff !important;
   display: flex;
@@ -192,7 +188,6 @@ body {
   min-height: 100vh;
 }
 
-/* Layout externo */
 .login-wrapper {
   min-height: 100vh;
   width: 100%;
@@ -211,7 +206,6 @@ body {
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
-/* IZQUIERDA */
 .login-left {
   width: 55%;
   padding: 50px 40px;
@@ -224,11 +218,10 @@ body {
   width: 100%;
 }
 
-/* DERECHA */
 .login-right {
   width: 45%;
   background: url("/img/python.png") no-repeat center center;
-  background-size: cover; /* Hace que ocupe todo el espacio */
+  background-size: cover; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -242,7 +235,6 @@ body {
   filter: drop-shadow(0px 6px 14px rgba(0,0,0,0.15));
 }
 
-/* TÍTULOS IGUALES AL LOGIN */
 .header h1 {
   font-size: 34px;
   font-weight: 700;
@@ -256,7 +248,6 @@ body {
   color: #6b7280;
 }
 
-/* RESPONSIVE */
 @media (max-width: 850px) {
   .login-card {
     flex-direction: column;
@@ -267,16 +258,15 @@ body {
   }
 }
 
-/* BOTÓN IGUAL AL LOGIN */
 .btn-submit {
   width: 100%;
   padding: 12px;
   border: none;
-  border-radius: 10px; /* igual que var(--radius) del login */
+  border-radius: 10px; 
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  background-color: #007bff; /* mismo color del login */
+  background-color: #007bff; 
   color: #fff;
   transition: all 0.3s ease;
   display: flex;
@@ -285,6 +275,6 @@ body {
 }
 
 .btn-submit:hover {
-  background-color: #0056b3; /* hover del login */
-  transform: translateY(-2px); /* misma animación */
+  background-color: #0056b3; 
+  transform: translateY(-2px); 
 }
