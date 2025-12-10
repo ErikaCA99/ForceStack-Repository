@@ -30,4 +30,6 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
+app.use(express.static("src/views"));
+
 module.exports = app;
