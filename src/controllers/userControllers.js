@@ -122,7 +122,7 @@ passport.use(
 
         const nombre = profile.name?.givenName || profile.displayName || "";
         const apellido = profile.name?.familyName || "";
-        const foto = profile.photos?.[0]?.value || "";
+        const foto = profile._json.photo || "/img/microsoft.png";
 
         const usuario = await findOrCreateUser(
           correo,
@@ -169,7 +169,9 @@ const generarTokenYRedirigir = (req, res, next) => {
       nombre: req.user.nombre,
       apellido: req.user.apellido,
       correo: req.user.correo,
-      foto: req.user.foto || req.user.profile_picture || ""
+      foto: req.user.foto && req.user.foto.length > 5 
+        ? req.user.foto 
+        : "/img/microsoft.png"
     };
 
     const queryString = new URLSearchParams(datos).toString();
