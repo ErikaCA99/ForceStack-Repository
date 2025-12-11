@@ -3,20 +3,18 @@ import dotenv from "dotenv";
 import pkg from "pg";
 import passport from "passport";
 import session from "express-session";
+
 import authRoutes from "./routes/authRoutes.js";
+import registerRoutes from "./routes/registerRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
-const { Pool } = pkg;
+const { Pool } = pkg;  
 
 const app = express();
 
 app.use(express.json());
 
-app.use(express.static("src/views"));
-app.use("/css", express.static("src/views/css"));
-app.use("/js", express.static("src/views/js"));
-app.use("/components", express.static("src/views/components"));
-app.use("/pages", express.static("src/views/pages"));
 
 app.use(
   session({
@@ -25,8 +23,19 @@ app.use(
     saveUninitialized: false,
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("/api", registerRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+
+app.use(express.static("src/views"));
+app.use("/css", express.static("src/views/css"));
+app.use("/js", express.static("src/views/js"));
+app.use("/components", express.static("src/views/components"));
+app.use("/pages", express.static("src/views/pages"));
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -59,10 +68,12 @@ const connectWithRetry = async (retries = MAX_RETRIES) => {
 
 await connectWithRetry();
 
-app.use("/auth", authRoutes);
-
 app.get("/", (req, res) => {
   res.sendFile("pages/login.html", { root: "src/views" });
+});
+
+app.get("/registro", (req, res) => {
+  res.sendFile("registro.html", { root: "src/views" });
 });
 
 app.get("/dashboard", (req, res) => {
@@ -72,11 +83,6 @@ app.get("/dashboard", (req, res) => {
 app.get("/topic_uno", (req, res) => {
   res.sendFile("pages/topic_uno.html", { root: "src/views" });
 });
-
-app.get("/registro", (req, res) => {
-  res.sendFile("registro.html", { root: "src/views" });
-});
-
 
 app.listen(process.env.PORT, () =>
   console.log(`Servidor corriendo en http://127.0.0.1:${process.env.PORT}`)
