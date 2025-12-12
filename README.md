@@ -34,7 +34,7 @@ Por otro lado, los **docentes** pueden crear y gestionar tópicos, materiales y 
 A continuación se muestra el **Diagrama de Contexto (C1)**, donde se identifican los actores principales (Profesor y Estudiante), el sistema de aprendizaje y los sistemas externos con los que interactúa (correo electrónico, calendario y sistema académico).  
 
   
-![Diagrama de Contexto](docs/imagenes/contexto.png)
+![Diagrama de Contexto](src/views/img/diagrama.jpeg)
 
 **Descripción:**  
 - **Profesor:** crea tópicos, evalúa y supervisa el desempeño.  
