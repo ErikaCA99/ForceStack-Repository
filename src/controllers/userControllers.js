@@ -9,7 +9,6 @@ import pkg from "pg";
 dotenv.config();
 const { Pool } = pkg;
 
-// Configuración de la Base de Datos
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -107,7 +106,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Microsoft a veces devuelve el mail en lugares distintos
         const correo =
           profile.emails?.[0]?.value ||
           profile._json?.mail ||
@@ -151,7 +149,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 
-// Generador de Token reutilizable
+//Token
 const generarTokenYRedirigir = (req, res, next) => {
   if (!req.user) {
     return res.redirect("/login.html?error=usuario_no_encontrado");
@@ -183,7 +181,7 @@ const generarTokenYRedirigir = (req, res, next) => {
 export const googleCallback = generarTokenYRedirigir;
 export const microsoftCallback = generarTokenYRedirigir;
 
-// --- REGISTRO MANUAL (Endpoint API) ---
+//Manual
 export const registerUser = async (req, res) => {
   try {
     
@@ -209,7 +207,7 @@ export const registerUser = async (req, res) => {
     await pool.query(
       `INSERT INTO users (nombre, apellido, correo, contraseña, rol, fecha_creacion, foto)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion, null]
+      [nombre, apellido, correo, hash, rol || "estudiante", fecha_creacion, "/img/microsoft.png"]
     );
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });
@@ -237,3 +235,53 @@ export const isAuthenticated = (req, res, next) => {
 };
 
 
+export const loginUser = async (req, res) => {
+  try {
+    const { correo, contraseña } = req.body;
+
+    if (!correo || !contraseña) {
+      return res.status(400).json({ message: "Correo y contraseña son obligatorios" });
+    }
+
+    const result = await pool.query("SELECT * FROM users WHERE correo = $1", [correo]);
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ message: "Correo no registrado" });
+    }
+
+    const user = result.rows[0];
+
+    const match = await bcrypt.compare(contraseña, user.contraseña);
+    if (!match) {
+      return res.status(400).json({ message: "Contraseña incorrecta" });
+    }
+
+    //Google
+    req.login(user, (err) => {
+      if (err) return res.status(500).json({ message: "Error en sesión" });
+
+      const token = jwt.sign(user, process.env.JWT_SECRET || "secret_key", {
+        expiresIn: "2h",
+      });
+
+      const fotoFinal =
+        user.foto && user.foto.length > 5 ? user.foto : "/img/microsoft.png";
+
+      const params = new URLSearchParams({
+        token,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        correo: user.correo,
+        foto: fotoFinal,
+      }).toString();
+
+      return res.json({
+        redirect: `/dashboard?${params}`,
+        message: "Login exitoso",
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};

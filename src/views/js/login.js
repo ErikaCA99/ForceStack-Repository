@@ -6,7 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleBtn.addEventListener("click", () => {
     const type =
       passwordInput.getAttribute("type") === "password" ? "text" : "password";
+
     passwordInput.setAttribute("type", type);
+
     toggleBtn.innerHTML =
       type === "password"
         ? "<i class=\"fas fa-eye\"></i>"
@@ -29,16 +31,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(`✅ Bienvenido ${data.user.correo}`);
-        localStorage.setItem("token", data.token);
-        // Redirigir al dashboard o página principal
-        window.location.href = "pages/dashboard.html";
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+
+        window.location.href = data.redirect;
       } else {
-        alert(`❌ ${data.message}`);
+        alert(data.message || "Error al iniciar sesión");
       }
+
     } catch (error) {
       console.error("Error:", error);
-      alert("⚠️ Error de conexión con el servidor");
+      alert("Error de conexión con el servidor");
     }
   });
 });
