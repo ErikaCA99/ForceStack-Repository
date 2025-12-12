@@ -46,8 +46,14 @@ A continuación se muestra el **Diagrama de Contexto (C1)**, donde se identifica
 
 ## Modelo de Base de Datos
 El modelo de datos incluye las principales entidades del sistema: **Usuarios (estudiantes, profesores), Cursos, Tópicos, Evaluaciones, Ejercicios y Diagnósticos**.  
- 
-![Modelo de Datos](docs/imagenes/bd.jpeg)  
+
+### Modelo de Base de Datos Inicial 
+Este fue la base datos inicial propuesta:
+![Modelo de Datos](src/views/img/bdAntigua.jpeg)  
+
+### Modelo de Base de Datos Actual 
+Esta es la base de datos con la que se decidio trabajar 
+![Modelo de Datos2](src/views/img/bdActual.png)  
 
 **Descripción:**  
 - **Estudiante / Profesor:** entidades principales de usuarios con sus credenciales y roles.  
