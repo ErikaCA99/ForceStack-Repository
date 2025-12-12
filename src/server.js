@@ -94,6 +94,18 @@ app.get("/topic_uno", (req, res) => {
   res.sendFile("pages/topic_uno.html", { root: "src/views" });
 });
 
+app.get("/progreso", (req, res) => {
+  res.sendFile("pages/progreso.html", { root: "src/views" });
+});
+
+app.get("/configuracion", (req, res) => {
+  res.sendFile("pages/configuration.html", { root: "src/views" });
+});
+
+app.get("/certificado", (req, res) => {
+  res.sendFile("pages/certificados.html", { root: "src/views" });
+});
+
 /**
  * ================================
  * ARRANQUE DEL SERVIDOR
